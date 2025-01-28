@@ -1,2 +1,2 @@
 family_stocks/seeds/*
-env/*
+.env
