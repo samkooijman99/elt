@@ -1,3 +1,3 @@
 family_stocks/seeds/*
 .env
-logs/*
+logs/
