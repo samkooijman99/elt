@@ -1,0 +1,119 @@
+services:
+  source_postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    networks:
+      - elt_network
+      - metanet1
+    environment:
+      POSTGRES_DB: source_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - ./source_db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  destination_postgres:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    networks:
+      - elt_network
+      - metanet1
+    environment:
+      POSTGRES_DB: destination_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+
+  elt_script:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "elt/elt_script.py"]
+    networks:
+      - elt_network
+      - metanet1
+    depends_on:
+      - source_postgres
+      - destination_postgres
+    
+  metabase-db:
+    image: postgres:latest
+    container_name: metabase_db
+    environment:
+        POSTGRES_DB: metabase
+        POSTGRES_USER: metabase
+        POSTGRES_PASSWORD: metabase_pass
+    volumes:
+      - metabase_db_data:/var/lib/postgresql/data
+    networks:
+      - metanet1
+  
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    volumes:
+      - /dev/urandom:/dev/random:ro
+      - metabase-data:/metabase-data
+    ports:
+      - 3000:3000
+    environment:
+    # Metabase application db
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: metabase_pass
+      MB_DB_HOST: metabase_db
+      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY:-myrandomencrytionkey}
+
+      # Metabase dwh connection
+      MB_DATABASE_TYPE: postgres
+      MB_DATABASE_DBNAME: destination_db
+      MB_DATABASE_PORT: 5432
+      MB_DATABASE_USER: postgres
+      MB_DATABASE_PASS: secret
+      MB_DATABASE_HOST: destination_postgres
+    networks:
+      - elt_network
+      - metanet1
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.9.0
+    command:
+      [
+        "build",
+        "--profiles-dir",
+        "/root",
+        "--project-dir",
+        "/dbt",
+        "--full-refresh"
+      ]
+    networks:
+      - elt_network
+    volumes:
+      - ./family_stocks:/dbt
+      - ~/.dbt:/root
+    depends_on:
+      elt_script:
+        condition: service_completed_successfully
+    environment:
+      DBT_PROFILE: family_stocks
+      DBT_TARGET: dev
+  
+volumes:
+  metabase_db_data:
+  metabase-data:
+  
+networks:
+  elt_network:
+    driver: bridge
+  metanet1:
+    driver: bridge
+  
