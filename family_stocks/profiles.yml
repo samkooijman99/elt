@@ -2,12 +2,11 @@ family_stocks:
   outputs:
     dev:
       type: postgres
-      host: destination_postgres
+      host: localhost
       user: postgres
       password: secret
-      port: 5432
+      port: 5433
       dbname: destination_db
       schema: public
       threads: 1
-
   target: dev
