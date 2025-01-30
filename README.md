@@ -6,11 +6,13 @@ Current tools:
 - metabase
 - postgres
 
-Tools to come:
+Tools / features to come:
 - cicd with github actions
 - using yfinance api to retrieve stock data
 - terraform
-- aws ec2
+- aws ec2 for hosting metabase possibly
+- sandbox / production env
+- airbyte
 
 How to fire up the docker containers: `docker compose up`
 
