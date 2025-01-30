@@ -7,6 +7,7 @@ Current tools:
 - postgres
 
 How to fire up the docker containers: `docker compose up`
+
 How to start a virtual env: run `source env/bin/activate`
 
 How to start up the proper postgres db: `psql -h localhost -p 5433 -U postgres -d destination_db`
