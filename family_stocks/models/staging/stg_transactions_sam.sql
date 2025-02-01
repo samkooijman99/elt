@@ -2,7 +2,6 @@ with clean_columns as (
 
 select 
     "Datum" as datum, 
-    "Tijd" as tijd,
     "Product" as product,
     "ISIN" as isin,
     "Beurs" as beurs,
@@ -22,8 +21,7 @@ from
 )
 
 select 
-    datum,
-    tijd,
+    to_date(datum, 'dd-MM-yyyy') as datum,
     product,
     isin,
     beurs,
@@ -31,12 +29,12 @@ select
     aantal,
     koers,
     valuta,
-    abs(lokale_waarde) as lokale_waarde,
-    abs(waarde) as waarde,
-    wisselkoers
-    transactiekosten,
-    abs(totale_bedrag) as totale_bedrag,
+    cast(abs(lokale_waarde) as float) as lokale_waarde,
+    cast(abs(waarde) as float) as waarde,
+    wisselkoers,
+    cast(abs(transactiekosten) as float) as transactiekosten,
+    cast(abs(totale_bedrag) as float) as totale_bedrag,
     order_id,
     case when waarde < 0 then 'aankoop' else 'verkoop' end as transactietype
 from 
-        clean_columns
+    clean_columns
