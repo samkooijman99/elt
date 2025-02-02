@@ -27,5 +27,3 @@ def get_stock_data():
     
     print(f"\nFinal DataFrame shape: {combined_df.shape}")
     return combined_df
-
-get_stock_data()
