@@ -11,9 +11,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install psycopg2
-RUN pip install psycopg2-binary
+RUN pip install psycopg2-binary yfinance pandas
 
 # Copy the elt directory
-COPY elt/ elt/
+COPY elt/ elt/ 
+COPY .env .env
 
 CMD ["python", "elt/elt_script.py"]
