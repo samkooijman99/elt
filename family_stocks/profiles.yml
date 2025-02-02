@@ -7,6 +7,6 @@ family_stocks:
       password: secret
       port: 5433
       dbname: destination_db
-      schema: public
+      schema: default_schema
       threads: 1
   target: dev

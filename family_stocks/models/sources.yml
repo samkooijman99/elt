@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: yfinance_data 
+    schema: yfinance_data  
+    tables:
+      - name: stock_data_hist
