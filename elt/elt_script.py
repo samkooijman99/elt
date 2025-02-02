@@ -34,7 +34,7 @@ def create_schema_and_table(conn, cur, schema_name, table_name):
         
         create_table_sql = f"""
         CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} (
-            "Date" TIMESTAMP,
+            "Date" DATE,
             "Open" FLOAT,
             "High" FLOAT,
             "Low" FLOAT,
