@@ -5,10 +5,10 @@ Current tools:
 - docker
 - metabase
 - postgres
+- using yfinance api to retrieve stock data
 
 Tools / features to come:
 - cicd with github actions
-- using yfinance api to retrieve stock data
 - terraform
 - aws ec2 for hosting metabase possibly
 - sandbox / production env
