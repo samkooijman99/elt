@@ -1,11 +1,14 @@
 import yfinance as yf
 import os
 import pandas as pd
+import json
 
 dfs = []
 
 def get_stock_data():
-    for isin in os.getenv('TICKER_SYMBOLS'):
+    tickers = json.loads(os.getenv('TICKER_SYMBOLS', '[]'))
+    for isin in tickers:
+        print(f"Processing {isin} ...")
         ticker = yf.Ticker(isin)
         historical_data = ticker.history(period="20y")
 
@@ -19,7 +22,9 @@ def get_stock_data():
 
     combined_df = combined_df.rename(columns={
         'Adj Close': 'Adj_Close',
-        'Stock Splits': 'Stock_Splits'
+        'Stock Splits': 'Stock_Splits',
+        "Capital Gains" : "Capital_Gains"
+
     })
     
     # Sort by Date and Symbol

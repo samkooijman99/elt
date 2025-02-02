@@ -39,10 +39,10 @@ def create_schema_and_table(conn, cur, schema_name, table_name):
             "High" FLOAT,
             "Low" FLOAT,
             "Close" FLOAT,
-            "Adj_Close" FLOAT,
             "Volume" BIGINT,
             "Dividends" FLOAT,
             "Stock_Splits" FLOAT,
+            "Capital_Gains" Float,
             "Symbol" VARCHAR(20)
         )
         """
