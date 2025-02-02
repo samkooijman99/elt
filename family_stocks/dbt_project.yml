@@ -36,6 +36,10 @@ models:
       +materialized: table
     staging:
       +materialized: table
+      +schema: staging_finance
+    intermediate:
+      +materialized: table
+      +schema: int_finance
 
 seeds:
   family_stocks:
