@@ -1,6 +1,7 @@
 import psycopg2
 import time
 from stocks import get_stock_data
+from dates import get_dates
 
 def wait_for_postgres(host, dbname, user, password, max_retries=30, delay_seconds=1):
     print(f"Waiting for {host} to be ready...")
@@ -27,7 +28,7 @@ def wait_for_postgres(host, dbname, user, password, max_retries=30, delay_second
     print(f"Failed to connect to {host} after {max_retries} attempts")
     return False
 
-def create_schema_and_table(conn, cur, schema_name, table_name):
+def create_stock_schema_and_table(conn, cur, schema_name, table_name):
     try:
         cur.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")
         conn.commit()
@@ -55,7 +56,26 @@ def create_schema_and_table(conn, cur, schema_name, table_name):
         print(f"Error creating schema and table: {str(e)}")
         raise
 
-def write_stock_data_to_db(df, conn, cur, schema_name, table_name):
+def create_date_schema_and_table(conn, cur, schema_name, table_name):
+    try:
+        cur.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")
+        conn.commit()
+        
+        create_table_sql = f"""
+        DROP TABLE IF EXISTS {schema_name}.{table_name};
+        CREATE TABLE {schema_name}.{table_name} (
+            "date" DATE
+        )
+        """
+        cur.execute(create_table_sql)
+        conn.commit()
+        print(f"Schema and table {schema_name}.{table_name} created successfully")
+        
+    except Exception as e:
+        print(f"Error creating schema and table: {str(e)}")
+        raise
+
+def write_data_to_db(df, conn, cur, schema_name, table_name):
     try:
         print("Preparing data for database insertion...")
         
@@ -109,6 +129,7 @@ def main():
 
         print("\n--- Starting stock data retrieval ---")
         stock_df = get_stock_data()
+        date_df = get_dates()
         print("\n--- Stock data retrieval completed ---")
         
         if stock_df is not None:
@@ -117,12 +138,18 @@ def main():
             
             schema_name = 'yfinance_data'
             table_name = 'stock_data_hist'
-            create_schema_and_table(dest_conn, dest_cur, schema_name, table_name)
-            
-            write_stock_data_to_db(stock_df, dest_conn, dest_cur, schema_name, table_name)
-        else:
-            raise ValueError("Stock data retrieval returned None")
+            create_stock_schema_and_table(dest_conn, dest_cur, schema_name, table_name)
+            write_data_to_db(stock_df, dest_conn, dest_cur, schema_name, table_name)
 
+        if date_df is not None:
+            print(f"Successfully retrieved stock data with shape: {date_df.shape}")
+            print("Sample of data columns:", date_df.columns.tolist())
+            
+            schema_name = 'general_dimensions'
+            table_name = 'dim_date'
+            create_date_schema_and_table(dest_conn, dest_cur, schema_name, table_name)
+            write_data_to_db(date_df, dest_conn, dest_cur, schema_name, table_name)
+        
         print("Closing database connections...")
         dest_cur.close()
         dest_conn.close()
