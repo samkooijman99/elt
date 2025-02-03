@@ -33,7 +33,8 @@ def create_schema_and_table(conn, cur, schema_name, table_name):
         conn.commit()
         
         create_table_sql = f"""
-        CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} (
+        DROP TABLE IF EXISTS {schema_name}.{table_name};
+        CREATE TABLE {schema_name}.{table_name} (
             "Date" DATE,
             "Open" FLOAT,
             "High" FLOAT,
