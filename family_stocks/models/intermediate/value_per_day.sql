@@ -1,13 +1,27 @@
+-- -- models/value_per_day.sql
+
+with joining_dates as (
+
 select 
-    sd.date,
-    sd.open,
-    ts.value
-    
-from 
-    {{ ref ('stg_stock_data_hist')}} sd
+    dd.*,
+    ts.date as stock_date,
+    ts.product,
+    ts.isin as isin,
+    sm.symbol as symbol,
+    ts.total_value,
+    ts.quantity,
+    ts.stock_price,
+    ts.transaction_costs
 
-left join 
-    {{ ref ('stg_transactions_sam')}} as ts
 
-on 
-    sd.date = ts.date
+from {{ ref('stg_dim_date')}} dd
+
+left join {{ ref ('stg_transactions_sam')}} ts
+
+on dd.date = ts.date
+
+left join {{ ref ('stock_mappings')}} sm
+
+on ts.isin = sm.isin)
+
+select * from joining_dates

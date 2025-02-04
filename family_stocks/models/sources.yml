@@ -5,3 +5,7 @@ sources:
     schema: yfinance_data  
     tables:
       - name: stock_data_hist
+  - name: general_dimensions
+    schema: general_dimensions
+    tables:
+      - name: dim_date

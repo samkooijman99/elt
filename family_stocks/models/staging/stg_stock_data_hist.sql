@@ -1,5 +1,5 @@
 select
-    "Date" as date,
+    cast("Date" as date) as date,
     "Open" as open,
     "High" as high, 
     "Low" as low,
