@@ -43,7 +43,8 @@ select
     cast(abs(value) as float) as value,
     exchange_rate,
     cast(abs(transaction_costs) as float) as transaction_costs,
-    cast(abs(total_value) as float) as total_value,
+    case when total_value is null then 0 else 
+        cast(abs(total_value) as float) end as total_value,
     order_id,
     case when value < 0 then 'aankoop' else 'verkoop' end as transaction_type
 from 
