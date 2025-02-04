@@ -9,3 +9,4 @@ sources:
     schema: general_dimensions
     tables:
       - name: dim_date
+      - name: exchange_rates
