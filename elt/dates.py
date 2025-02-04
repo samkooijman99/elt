@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta
 import pandas as pd
 
-def get_dates():
-    
-    end_date = datetime.now()
-    start_date = end_date - timedelta(365.25 * 20)
+def get_dates(start_date, end_date):
 
     # Create a list to store all dates
     dates_list = []

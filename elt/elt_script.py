@@ -2,6 +2,12 @@ import psycopg2
 import time
 from stocks import get_stock_data
 from dates import get_dates
+from exchange_rates import get_exchange_rates
+from datetime import datetime, timedelta
+
+
+END_DATE = datetime.now()
+START_DATE = END_DATE - timedelta(365.25 * 20)
 
 def wait_for_postgres(host, dbname, user, password, max_retries=30, delay_seconds=1):
     print(f"Waiting for {host} to be ready...")
@@ -75,6 +81,27 @@ def create_date_schema_and_table(conn, cur, schema_name, table_name):
         print(f"Error creating schema and table: {str(e)}")
         raise
 
+def create_exchange_rate_schema_and_table(conn, cur, schema_name, table_name):
+    try:
+        cur.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")
+        conn.commit()
+        
+        create_table_sql = f"""
+        DROP TABLE IF EXISTS {schema_name}.{table_name};
+        CREATE TABLE {schema_name}.{table_name} (
+        "Date" DATE,
+        "usd_per_eur" NUMERIC(10,4),  -- Allows values up to 999999.9999
+        "eur_per_usd" NUMERIC(10,4)   -- 10 total digits, 4 after decimal
+        )   
+        """
+        cur.execute(create_table_sql)
+        conn.commit()
+        print(f"Schema and table {schema_name}.{table_name} created successfully")
+        
+    except Exception as e:
+        print(f"Error creating schema and table: {str(e)}")
+        raise
+
 def write_data_to_db(df, conn, cur, schema_name, table_name):
     try:
         print("Preparing data for database insertion...")
@@ -129,7 +156,8 @@ def main():
 
         print("\n--- Starting stock data retrieval ---")
         stock_df = get_stock_data()
-        date_df = get_dates()
+        date_df = get_dates(START_DATE, END_DATE)
+        exchange_df = get_exchange_rates(START_DATE, END_DATE)
         print("\n--- Stock data retrieval completed ---")
         
         if stock_df is not None:
@@ -149,6 +177,15 @@ def main():
             table_name = 'dim_date'
             create_date_schema_and_table(dest_conn, dest_cur, schema_name, table_name)
             write_data_to_db(date_df, dest_conn, dest_cur, schema_name, table_name)
+                
+        if exchange_df is not None:
+            print(f"Successfully retrieved stock data with shape: {date_df.shape}")
+            print("Sample of data columns:", date_df.columns.tolist())
+            
+            schema_name = 'general_dimensions'
+            table_name = 'exchange_rates'
+            create_exchange_rate_schema_and_table(dest_conn, dest_cur, schema_name, table_name)
+            write_data_to_db(exchange_df, dest_conn, dest_cur, schema_name, table_name)
         
         print("Closing database connections...")
         dest_cur.close()
