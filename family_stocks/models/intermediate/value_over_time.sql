@@ -24,6 +24,6 @@ correct_dates as (
     having count(*) = 2
 )
 
-select *
+select *, current_value - current_costs as current_profit
 from calculate_current_value
 where date in (select date from correct_dates)
