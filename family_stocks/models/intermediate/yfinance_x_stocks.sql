@@ -64,7 +64,8 @@ joining_yfinance as (
         case when gt.quantity is null then 0 else gt.quantity end as quantity,
         gt.stock_price,
         gt.transaction_costs,
-        sdh.close 
+        sdh.close,
+        sdh.dividends
     from group_transactions gt
     left join {{ ref ('stg_stock_data_hist')}} sdh
         on case 

@@ -4,6 +4,7 @@ WITH sum_some_shit as (
         symbol,
         sum(total_value) over (partition by symbol order by date asc) as current_costs,
         sum(quantity) over (partition by symbol order by date asc) as current_quantity,
+        dividends * sum(quantity) over (partition by symbol order by date asc) as dividend_payout,
         close
     from 
         {{ ref ('yfinance_x_stocks')}}
@@ -11,7 +12,8 @@ WITH sum_some_shit as (
 ),
 
 calculate_current_value as (
-    select *, 
+    select 
+        *, 
         close * current_quantity as current_value
     from sum_some_shit
     where current_costs > 0
@@ -24,6 +26,8 @@ correct_dates as (
     having count(*) = 2
 )
 
-select *, current_value - current_costs as current_profit
+select *,
+current_value - current_costs as current_profit
 from calculate_current_value
-where date in (select date from correct_dates)
+where 
+date in (select date from correct_dates)
