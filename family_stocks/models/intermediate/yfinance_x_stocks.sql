@@ -60,8 +60,8 @@ joining_yfinance as (
         gt.product,
         gt.isin,
         case when gt.symbol is null then sdh.symbol else gt.symbol end as symbol,
-        gt.total_value,
-        gt.quantity,
+        case when gt.total_value is null then 0 else gt.total_value end as total_value,
+        case when gt.quantity is null then 0 else gt.quantity end as quantity,
         gt.stock_price,
         gt.transaction_costs,
         sdh.close 
@@ -74,3 +74,4 @@ joining_yfinance as (
 )
 
 select * from joining_yfinance where date > '2020-01-01'
+order by date asc
