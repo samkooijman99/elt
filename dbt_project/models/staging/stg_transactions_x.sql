@@ -16,7 +16,7 @@ select
     "Totaal" as total_value,
     "Order ID" as order_id
 from 
-    {{ ref('transactions_parents') }}
+    {{ ref('transactions_sam') }}
 
 ),
 
@@ -47,6 +47,6 @@ select
         cast(abs(total_value) as float) end as total_value,
     order_id,
     case when value < 0 then 'aankoop' else 'verkoop' end as transaction_type,
-    'parents' as owner
+    'x' as owner
 from 
     standardized_dates

@@ -1,7 +1,7 @@
 with 
 stock_mappings as (select * from {{ ref ('stock_mappings')}} ),
 
-transactions_sam as (select * from {{ ref ('combining_portfolios')}} where isin in (select isin from stock_mappings)),
+transactions as (select * from {{ ref ('combining_portfolios')}} where isin in (select isin from stock_mappings)),
 
 unique_owners as (select distinct owner from {{ ref ('combining_portfolios')}}),
 
@@ -29,19 +29,19 @@ joining_owners_mappings as (
 joining_dates_personal_stocks as (
 select 
     jow.*,
-    ts.date as stock_date,
-    ts.product,
-    ts.total_value,
-    ts.quantity,
-    ts.stock_price,
-    ts.transaction_costs
+    t.date as stock_date,
+    t.product,
+    t.total_value,
+    t.quantity,
+    t.stock_price,
+    t.transaction_costs
 from joining_owners_mappings jow
 
-left join transactions_sam ts
+left join transactions t
 on 
-    jow.date = ts.date 
-    and jow.owner = ts.owner
-    and jow.isin = ts.isin
+    jow.date = t.date 
+    and jow.owner = t.owner
+    and jow.isin = t.isin
 ),
 
 
