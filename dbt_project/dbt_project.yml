@@ -32,15 +32,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   family_stocks:
     # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: table
+
+
     staging:
       +materialized: table
       +schema: staging_finance
+
     intermediate:
       +materialized: table
       +schema: int_finance
 
+    marts:
+      +materialized: table
+      +schema: m_finance
+
 seeds:
-  family_stocks:
+  manual_data:
       

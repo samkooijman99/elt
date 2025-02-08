@@ -27,6 +27,17 @@ calculate_current_value as (
     where running_costs > 0
 )
 
-select *,
-current_value - (running_costs - running_dividend_payouts) as current_profit
-from calculate_current_value
+select 
+    date,
+    symbol,
+    owner,
+    running_costs - running_dividend_payouts as running_costs,
+    current_quantity
+    dividends,
+    close,
+    dividend_payout,
+    running_dividend_payouts,
+    current_value,
+    current_value - (running_costs - running_dividend_payouts) as current_profit
+from 
+    calculate_current_value
