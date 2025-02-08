@@ -92,7 +92,7 @@ services:
       elt_script:
         condition: service_completed_successfully
     environment:
-      DBT_PROFILE: family_stocks
+      DBT_PROFILE: stocks
       DBT_TARGET: dev
   
 volumes:

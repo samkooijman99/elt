@@ -1,4 +1,5 @@
-family_stocks:
+# Out of sync with docker file
+stocks:
   outputs:
     dev:
       type: postgres
