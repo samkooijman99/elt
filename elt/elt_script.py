@@ -153,8 +153,8 @@ def main():
             write_data_to_db(date_df, dest_conn, dest_cur, schema_name, table_name)
                 
         if exchange_df is not None:
-            print(f"Successfully retrieved stock data with shape: {date_df.shape}")
-            print("Sample of data columns:", date_df.columns.tolist())
+            print(f"Successfully retrieved stock data with shape: {exchange_df.shape}")
+            print("Sample of data columns:", exchange_df.columns.tolist())
             
             schema_name = 'general_dimensions'
             table_name = 'exchange_rates'
