@@ -16,7 +16,7 @@ select
     "Totaal" as total_value,
     "Order ID" as order_id
 from 
-    {{ ref('transactions_sam') }}
+    {{ ref('transactions_x') }}
 
 ),
 
