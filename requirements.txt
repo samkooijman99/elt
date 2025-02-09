@@ -1,2 +1,3 @@
 psycopg2-binary==2.9.9
 pandas==2.1.0
+sqlfluff==3.3.1
