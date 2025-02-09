@@ -31,7 +31,7 @@ joining_stock_owners_mappings as (
 
 joining_dates_personal_stocks as (
     select
-        jow.*,
+        jow.*,   
         t._date as stock_date,
         t.product,
         t.total_value,
