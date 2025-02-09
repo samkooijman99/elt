@@ -1,9 +1,9 @@
 select
-    cast("Date" as date) as date,
+    cast("Date" as date) as _date,
     "Open" as open,
-    "High" as high, 
+    "High" as high,
     "Low" as low,
-    "Close" as close,
+    "Close" as stock_close,
     "Volume" as volume,
     "Stock_Splits" as stock_splits,
     "Capital_Gains" as capital_gains,
